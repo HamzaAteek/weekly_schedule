@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تسجيل دخول الأدمن | كلية المعلوماتية</title>
+    <link rel="stylesheet" href="/css/base.css" />
+    <link rel="stylesheet" href="/css/admin.css" />
+  </head>
+  <body>
+    <div class="admin-login-page">
+      <div class="login-card card">
+        <h1>لوحة تحكم الأدمن</h1>
+        <p class="subtitle">كلية المعلوماتية — البرنامج الأسبوعي</p>
+        <form id="login-form">
+          <div class="form-group">
+            <label for="email">البريد الإلكتروني</label>
+            <input type="email" id="email" name="email" class="form-control" required autocomplete="username" />
+          </div>
+          <div class="form-group">
+            <label for="password">كلمة المرور</label>
+            <input type="password" id="password" name="password" class="form-control" required autocomplete="current-password" />
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%">تسجيل الدخول</button>
+        </form>
+        <p style="text-align: center; margin-top: 1rem">
+          <a href="/">← العودة للبرنامج</a>
+        </p>
+      </div>
+    </div>
+    <script type="module">
+      import { bindLoginForm, redirectIfAuthed } from '/js/admin/auth.js';
+      redirectIfAuthed();
+      bindLoginForm(document.getElementById('login-form'));
+    </script>
+  </body>
+</html>

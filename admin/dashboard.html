@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>لوحة التحكم | كلية المعلوماتية</title>
+    <link rel="stylesheet" href="/css/base.css" />
+    <link rel="stylesheet" href="/css/admin.css" />
+    <link rel="stylesheet" href="/css/student.css" />
+    <link rel="stylesheet" href="/css/print.css" />
+  </head>
+  <body>
+    <div class="admin-layout">
+      <aside class="admin-sidebar" id="sidebar">
+        <div class="admin-sidebar__brand">لوحة التحكم</div>
+        <nav class="admin-nav" id="admin-nav">
+          <a href="#home" data-panel="home" class="active">الرئيسية</a>
+          <a href="#schedule" data-panel="schedule">البرنامج الدراسي</a>
+          <a href="#subjects" data-panel="subjects">المواد</a>
+          <a href="#teachers" data-panel="teachers">المدرسون</a>
+          <a href="#rooms" data-panel="rooms">القاعات</a>
+          <a href="#years" data-panel="years">السنوات</a>
+          <a href="#categories" data-panel="categories">الفئات</a>
+          <a href="#times" data-panel="times">أوقات المحاضرات</a>
+          <a href="#settings" data-panel="settings">الإعدادات</a>
+          <a href="#" class="logout" id="btn-logout">تسجيل الخروج</a>
+        </nav>
+      </aside>
+
+      <main class="admin-main">
+        <div class="admin-topbar">
+          <button type="button" class="btn btn-secondary menu-toggle" id="menu-toggle">القائمة</button>
+          <h2 id="panel-title">الرئيسية</h2>
+          <button type="button" class="btn btn-ghost btn-sm" id="theme-toggle">الوضع الداكن</button>
+        </div>
+
+        <section id="panel-home" class="admin-panel active" data-title="الرئيسية">
+          <div class="stats-grid" id="stats-grid"></div>
+          <div class="card" style="padding: 1.25rem">
+            <p>مرحبًا، <strong id="admin-email"></strong></p>
+            <p style="color: var(--color-text-muted)">استخدم القائمة الجانبية لإدارة البرنامج والبيانات المرجعية.</p>
+          </div>
+        </section>
+
+        <section id="panel-schedule" class="admin-panel" data-title="البرنامج الدراسي">
+          <div class="card filters-admin" id="schedule-filters"></div>
+          <div class="toolbar">
+            <button type="button" class="btn btn-primary" id="btn-add-lecture">إضافة محاضرة</button>
+            <button type="button" class="btn btn-secondary" id="btn-export-csv">تصدير CSV</button>
+            <button type="button" class="btn btn-secondary" id="btn-export-print">طباعة</button>
+          </div>
+          <div class="table-wrap card">
+            <table class="data-table" id="schedule-admin-table">
+              <thead>
+                <tr>
+                  <th>اليوم</th>
+                  <th>المحاضرة</th>
+                  <th>السنة</th>
+                  <th>الجنس</th>
+                  <th>الفئة</th>
+                  <th>المادة</th>
+                  <th>المدرس</th>
+                  <th>القاعة</th>
+                  <th>الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="panel-subjects" class="admin-panel" data-title="المواد">
+          <div class="toolbar">
+            <input type="search" class="form-control" id="search-subjects" placeholder="بحث عن مادة..." style="max-width: 240px" />
+            <button type="button" class="btn btn-primary" id="btn-add-subject">إضافة مادة</button>
+          </div>
+          <div class="table-wrap card">
+            <table class="data-table" id="subjects-table">
+              <thead><tr><th>اسم المادة</th><th>الرمز</th><th>الإجراءات</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="panel-teachers" class="admin-panel" data-title="المدرسون">
+          <div class="toolbar">
+            <input type="search" class="form-control" id="search-teachers" placeholder="بحث عن مدرس..." style="max-width: 240px" />
+            <button type="button" class="btn btn-primary" id="btn-add-teacher">إضافة مدرس</button>
+          </div>
+          <div class="table-wrap card">
+            <table class="data-table" id="teachers-table">
+              <thead><tr><th>اسم المدرس</th><th>الإجراءات</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="panel-rooms" class="admin-panel" data-title="القاعات">
+          <div class="toolbar">
+            <input type="search" class="form-control" id="search-rooms" placeholder="بحث عن قاعة..." style="max-width: 240px" />
+            <button type="button" class="btn btn-primary" id="btn-add-room">إضافة قاعة</button>
+          </div>
+          <div class="table-wrap card">
+            <table class="data-table" id="rooms-table">
+              <thead><tr><th>اسم القاعة</th><th>الإجراءات</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="panel-years" class="admin-panel" data-title="السنوات الدراسية">
+          <div class="toolbar">
+            <button type="button" class="btn btn-primary" id="btn-add-year">إضافة سنة</button>
+          </div>
+          <div class="table-wrap card">
+            <table class="data-table" id="years-table">
+              <thead><tr><th>الاسم</th><th>الترتيب</th><th>الإجراءات</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="panel-categories" class="admin-panel" data-title="الفئات">
+          <div class="toolbar">
+            <input type="search" class="form-control" id="search-categories" placeholder="بحث عن فئة..." style="max-width: 240px" />
+            <button type="button" class="btn btn-primary" id="btn-add-category">إضافة فئة</button>
+          </div>
+          <div class="table-wrap card">
+            <table class="data-table" id="categories-table">
+              <thead><tr><th>السنة</th><th>اسم الفئة</th><th>الإجراءات</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="panel-times" class="admin-panel" data-title="أوقات المحاضرات">
+          <div class="card" style="padding: 1.25rem" id="lecture-times-form"></div>
+          <button type="button" class="btn btn-primary" id="btn-save-times">حفظ الأوقات</button>
+        </section>
+
+        <section id="panel-settings" class="admin-panel" data-title="الإعدادات">
+          <div class="card" style="padding: 1.25rem">
+            <p>الحساب: <span id="settings-email"></span></p>
+            <p style="color: var(--color-text-muted); font-size: 0.9rem">
+              لتغيير كلمة المرور استخدم لوحة Supabase Authentication أو رابط «نسيت كلمة المرور» إن فُعّل.
+            </p>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/js/admin/app.js"></script>
+  </body>
+</html>

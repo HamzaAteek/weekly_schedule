@@ -1,0 +1,13 @@
+{
+  "name": "it-weekly-schedule",
+  "private": true,
+  "description": "البرنامج الأسبوعي — كلية المعلوماتية",
+  "scripts": {
+    "dev": "vercel dev",
+    "preview": "npx --yes serve . -l 3000"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.118.0"
+  }
+}

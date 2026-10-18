@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="البرنامج الدراسي الأسبوعي — كلية المعلوماتية" />
+    <title>كلية المعلوماتية | البرنامج الأسبوعي</title>
+    <link rel="stylesheet" href="/css/base.css" />
+    <link rel="stylesheet" href="/css/student.css" />
+    <link rel="stylesheet" href="/css/print.css" />
+  </head>
+  <body>
+    <header class="student-nav no-print">
+      <div class="student-nav__inner">
+        <span class="student-nav__brand">كلية المعلوماتية</span>
+        <div class="student-nav__actions">
+          <button type="button" class="btn btn-ghost btn-sm theme-toggle" id="theme-toggle">الوضع الداكن</button>
+          <a class="btn btn-secondary btn-sm" href="/admin">دخول الأدمن</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <h1>كلية المعلوماتية</h1>
+        <p>البرنامج الدراسي الأسبوعي</p>
+        <p id="print-title" class="visually-hidden" aria-hidden="true"></p>
+      </section>
+
+      <section class="filters-card card no-print" aria-label="فلاتر البرنامج">
+        <div class="filters-grid">
+          <div class="form-group">
+            <label for="filter-year">السنة الدراسية</label>
+            <select id="filter-year" class="form-control">
+              <option value="">اختر السنة</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="filter-gender">الجنس</label>
+            <select id="filter-gender" class="form-control">
+              <option value="">الكل</option>
+              <option value="male">ذكور</option>
+              <option value="female">إناث</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="filter-category">الفئة / الشعبة</label>
+            <select id="filter-category" class="form-control">
+              <option value="">اختر الفئة</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section class="schedule-section">
+        <div class="schedule-toolbar no-print">
+          <span class="scroll-hint">← اسحب لرؤية بقية الجدول →</span>
+          <button type="button" class="btn btn-primary" id="btn-print">طباعة البرنامج</button>
+        </div>
+
+        <div id="schedule-loading" class="loading-schedule card" hidden>
+          <div class="spinner" aria-label="جاري التحميل"></div>
+          <div class="skeleton-table">
+            <div class="skeleton skeleton-row"></div>
+            <div class="skeleton skeleton-row"></div>
+            <div class="skeleton skeleton-row"></div>
+          </div>
+        </div>
+
+        <div id="schedule-empty" class="empty-state card" hidden>
+          <p>لا توجد محاضرات مسجلة لهذه الخيارات.</p>
+        </div>
+
+        <div id="schedule-wrap" class="schedule-table-wrap" hidden>
+          <table class="schedule-table" aria-label="جدول المحاضرات">
+            <thead id="schedule-head"></thead>
+            <tbody id="schedule-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer-note no-print">
+      <p>© كلية المعلوماتية — البرنامج الأسبوعي</p>
+    </footer>
+
+    <script type="module" src="/js/student/schedule.js"></script>
+  </body>
+</html>

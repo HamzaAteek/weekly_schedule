@@ -1,0 +1,8 @@
+node_modules/
+.env
+.env.local
+js/env.local.js
+!js/env.local.example.js
+.DS_Store
+Thumbs.db
+*.log
