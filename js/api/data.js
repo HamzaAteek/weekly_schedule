@@ -1,4 +1,5 @@
 import { getSupabase } from '../supabase-client.js';
+import { getPublicSupabase } from '../supabase-public.js';
 
 const SCHEDULE_SELECT = `
   id, day, period, gender,
@@ -11,7 +12,7 @@ const SCHEDULE_SELECT = `
 `;
 
 export async function fetchAcademicYears() {
-  const supabase = await getSupabase();
+  const supabase = await getPublicSupabase();
   const { data, error } = await supabase
     .from('academic_years')
     .select('*')
@@ -21,7 +22,7 @@ export async function fetchAcademicYears() {
 }
 
 export async function fetchCategories(yearId = null) {
-  const supabase = await getSupabase();
+  const supabase = await getPublicSupabase();
   let q = supabase.from('categories').select('*, academic_years(name)').order('name');
   if (yearId) q = q.eq('academic_year_id', yearId);
   const { data, error } = await q;
@@ -30,28 +31,28 @@ export async function fetchCategories(yearId = null) {
 }
 
 export async function fetchSubjects() {
-  const supabase = await getSupabase();
+  const supabase = await getPublicSupabase();
   const { data, error } = await supabase.from('subjects').select('*').order('name');
   if (error) throw error;
   return data;
 }
 
 export async function fetchTeachers() {
-  const supabase = await getSupabase();
+  const supabase = await getPublicSupabase();
   const { data, error } = await supabase.from('teachers').select('*').order('name');
   if (error) throw error;
   return data;
 }
 
 export async function fetchRooms() {
-  const supabase = await getSupabase();
+  const supabase = await getPublicSupabase();
   const { data, error } = await supabase.from('rooms').select('*').order('name');
   if (error) throw error;
   return data;
 }
 
 export async function fetchLectureTimes() {
-  const supabase = await getSupabase();
+  const supabase = await getPublicSupabase();
   const { data, error } = await supabase
     .from('lecture_times')
     .select('*')
@@ -61,7 +62,7 @@ export async function fetchLectureTimes() {
 }
 
 export async function fetchSchedule(filters = {}) {
-  const supabase = await getSupabase();
+  const supabase = await getPublicSupabase();
   let q = supabase.from('schedule').select(SCHEDULE_SELECT);
   if (filters.academic_year_id) q = q.eq('academic_year_id', filters.academic_year_id);
   if (filters.category_id) q = q.eq('category_id', filters.category_id);

@@ -11,8 +11,11 @@
   </head>
   <body>
     <div class="admin-layout">
-      <aside class="admin-sidebar" id="sidebar">
-        <div class="admin-sidebar__brand">لوحة التحكم</div>
+      <aside class="admin-sidebar" id="sidebar" aria-label="القائمة الرئيسية">
+        <div class="admin-sidebar__brand">
+          <span>لوحة التحكم</span>
+          <button type="button" class="sidebar-close" id="sidebar-close" aria-label="إغلاق القائمة">×</button>
+        </div>
         <nav class="admin-nav" id="admin-nav">
           <a href="#home" data-panel="home" class="active">الرئيسية</a>
           <a href="#schedule" data-panel="schedule">البرنامج الدراسي</a>

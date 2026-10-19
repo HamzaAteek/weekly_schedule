@@ -152,6 +152,82 @@ function setLoading(on) {
   els.empty.hidden = true;
 }
 
+function getExportName(extension) {
+  const title = els.printTitle?.textContent || 'البرنامج-الأسبوعي';
+  const safeTitle = title.replace(/[^\u0600-\u06ff\w\s-]/g, '').trim().replace(/\s+/g, '-');
+  return `${safeTitle || 'البرنامج-الأسبوعي'}.${extension}`;
+}
+
+async function loadHtml2Canvas() {
+  const module = await import('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/+esm');
+  return module.default;
+}
+
+async function exportScheduleAsImage() {
+  if (els.scheduleWrap.hidden) {
+    showToast('اختر الفلاتر وأظهر الجدول أولًا.', 'warning');
+    return;
+  }
+  const button = document.getElementById('btn-export-image');
+  button.disabled = true;
+  try {
+    const html2canvas = await loadHtml2Canvas();
+    const canvas = await html2canvas(document.querySelector('.schedule-table'), {
+      backgroundColor: getComputedStyle(document.body).backgroundColor,
+      scale: Math.min(window.devicePixelRatio || 1, 2),
+      useCORS: true,
+    });
+    const link = document.createElement('a');
+    link.download = getExportName('png');
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    showToast('تم تصدير الجدول كصورة.', 'success');
+  } catch (err) {
+    console.error(err);
+    showToast('تعذر تصدير الصورة. حاول مرة أخرى.', 'error');
+  } finally {
+    button.disabled = false;
+  }
+}
+
+async function exportScheduleAsPdf() {
+  if (els.scheduleWrap.hidden) {
+    showToast('اختر الفلاتر وأظهر الجدول أولًا.', 'warning');
+    return;
+  }
+  const button = document.getElementById('btn-export-pdf');
+  button.disabled = true;
+  try {
+    const [html2canvas, { jsPDF }] = await Promise.all([
+      loadHtml2Canvas(),
+      import('https://cdn.jsdelivr.net/npm/jspdf@2.5.1/+esm'),
+    ]);
+    const canvas = await html2canvas(document.querySelector('.schedule-table'), {
+      backgroundColor: '#ffffff',
+      scale: 2,
+      useCORS: true,
+    });
+    const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    const margin = 8;
+    const pageWidth = pdf.internal.pageSize.getWidth() - margin * 2;
+    const pageHeight = pdf.internal.pageSize.getHeight() - margin * 2;
+    const imageHeight = (canvas.height * pageWidth) / canvas.width;
+    let offset = 0;
+    while (offset < imageHeight) {
+      if (offset) pdf.addPage();
+      pdf.addImage(canvas.toDataURL('image/jpeg', 0.92), 'JPEG', margin, margin - offset, pageWidth, imageHeight);
+      offset += pageHeight;
+    }
+    pdf.save(getExportName('pdf'));
+    showToast('تم تصدير الجدول كملف PDF.', 'success');
+  } catch (err) {
+    console.error(err);
+    showToast('تعذر تصدير ملف PDF. حاول مرة أخرى.', 'error');
+  } finally {
+    button.disabled = false;
+  }
+}
+
 async function refreshSchedule() {
   const yearId = els.year.value;
   const gender = els.gender.value;
@@ -208,6 +284,8 @@ function applyQueryToFilters() {
 async function init() {
   initTheme(document.getElementById('theme-toggle'));
   document.getElementById('btn-print')?.addEventListener('click', () => window.print());
+  document.getElementById('btn-export-image')?.addEventListener('click', exportScheduleAsImage);
+  document.getElementById('btn-export-pdf')?.addEventListener('click', exportScheduleAsPdf);
 
   try {
     await loadMeta();

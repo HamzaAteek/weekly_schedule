@@ -75,6 +75,9 @@ async function init() {
   document.getElementById('menu-toggle')?.addEventListener('click', () => {
     document.getElementById('sidebar')?.classList.toggle('open');
   });
+  document.getElementById('sidebar-close')?.addEventListener('click', () => {
+    document.getElementById('sidebar')?.classList.remove('open');
+  });
 
   entities = createEntitiesController(state, refreshScheduleFilters);
   schedulePanel = createSchedulePanel(state);

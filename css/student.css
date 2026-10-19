@@ -76,6 +76,10 @@
   margin-bottom: 1rem;
 }
 
+.schedule-toolbar .btn {
+  white-space: nowrap;
+}
+
 .scroll-hint {
   font-size: 0.85rem;
   color: var(--color-text-muted);
@@ -97,6 +101,7 @@
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   box-shadow: var(--shadow-sm);
+  contain: layout paint;
 }
 
 .schedule-table {
