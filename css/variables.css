@@ -23,15 +23,16 @@
 }
 
 [data-theme='dark'] {
-  --color-primary: #93c5fd;
+  --color-primary: #bfdbfe;
   --color-primary-light: #60a5fa;
-  --color-primary-dark: #e2e8f0;
+  --color-primary-dark: #0b1220;
   --color-accent: #a5b4fc;
   --color-bg: #0f172a;
   --color-surface: #1e293b;
   --color-text: #f1f5f9;
   --color-text-muted: #94a3b8;
   --color-border: #334155;
+  --color-bg: #0f172a;
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.35);
 }

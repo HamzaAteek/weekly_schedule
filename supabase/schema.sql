@@ -73,6 +73,11 @@ CREATE TABLE IF NOT EXISTS schedule (
 CREATE INDEX IF NOT EXISTS idx_schedule_filters
   ON schedule (academic_year_id, category_id, gender);
 
+-- يدعم المحاضرات المشتركة بين عدة فئات مع الحفاظ على category_id للتوافق القديم
+ALTER TABLE schedule ADD COLUMN IF NOT EXISTS category_ids UUID[] NOT NULL DEFAULT '{}';
+UPDATE schedule SET category_ids = ARRAY[category_id]::UUID[] WHERE cardinality(category_ids) = 0;
+CREATE INDEX IF NOT EXISTS idx_schedule_category_ids ON schedule USING GIN (category_ids);
+
 CREATE INDEX IF NOT EXISTS idx_schedule_day_period
   ON schedule (day, period);
 

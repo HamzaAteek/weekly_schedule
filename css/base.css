@@ -18,6 +18,7 @@ body {
   color: var(--color-text);
   line-height: 1.6;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
 
 a {
@@ -259,7 +260,7 @@ textarea {
 .data-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9rem;
+  font-size: 0.96rem;
 }
 
 .data-table th,
@@ -267,6 +268,7 @@ textarea {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid var(--color-border);
   text-align: right;
+  color: var(--color-text);
 }
 
 .data-table th {

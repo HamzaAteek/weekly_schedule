@@ -72,7 +72,7 @@ export function createSchedulePanel(state) {
           <td>${periodLabel(row.period)}</td>
           <td>${row.academic_years?.name ?? ''}</td>
           <td>${genderLabel(row.gender)}</td>
-          <td>${row.categories?.name ?? ''}</td>
+          <td>${getCategoryNames(row).join('، ')}</td>
           <td>${row.subjects?.name ?? ''}</td>
           <td>${row.teachers?.name ?? ''}</td>
           <td>${row.rooms?.name ?? ''}</td>
@@ -107,10 +107,11 @@ export function createSchedulePanel(state) {
     const cats = state.categories.filter(
       (c) => !values.academic_year_id || c.academic_year_id === values.academic_year_id
     );
+    const selectedCategoryIds = values.category_ids ?? (values.category_id ? [values.category_id] : []);
     const catOpts = cats
       .map(
         (c) =>
-          `<option value="${c.id}" ${values.category_id === c.id ? 'selected' : ''}>${c.name}</option>`
+          `<option value="${c.id}" ${selectedCategoryIds.includes(c.id) ? 'selected' : ''}>${c.name}</option>`
       )
       .join('');
     const subOpts = state.subjects
@@ -141,7 +142,7 @@ export function createSchedulePanel(state) {
           <option value="male" ${values.gender === 'male' ? 'selected' : ''}>ذكور</option>
           <option value="female" ${values.gender === 'female' ? 'selected' : ''}>إناث</option>
         </select></div>
-        <div class="form-group"><label>الفئة</label><select name="category_id" id="lec-category" class="form-control" required>${catOpts}</select></div>
+        <div class="form-group"><label>الفئات (يمكن اختيار أكثر من فئة)</label><select name="category_ids" id="lec-category" class="form-control" multiple required>${catOpts}</select></div>
         <div class="form-group"><label>المادة</label><select name="subject_id" class="form-control" required>${subOpts}</select></div>
         <div class="form-group"><label>المدرس</label><select name="teacher_id" class="form-control" required>${teachOpts}</select></div>
         <div class="form-group"><label>القاعة</label><select name="room_id" class="form-control" required>${roomOpts}</select></div>
@@ -157,15 +158,22 @@ export function createSchedulePanel(state) {
       const yearId = yearSel.value;
       const cats = state.categories.filter((c) => c.academic_year_id === yearId);
       catSel.innerHTML = cats.map((c) => `<option value="${c.id}">${c.name}</option>`).join('');
+      catSel.required = true;
     });
   }
 
   async function saveLecture(fd, excludeId = null) {
+    const categoryIds = fd.getAll('category_ids').filter(Boolean);
+    if (!categoryIds.length) {
+      showToast('اختر فئة واحدة على الأقل.', 'error');
+      return false;
+    }
     const row = {
       day: Number(fd.get('day')),
       period: Number(fd.get('period')),
       academic_year_id: fd.get('academic_year_id'),
-      category_id: fd.get('category_id'),
+      category_id: categoryIds[0],
+      category_ids: categoryIds,
       gender: fd.get('gender'),
       subject_id: fd.get('subject_id'),
       teacher_id: fd.get('teacher_id'),
@@ -211,6 +219,7 @@ export function createSchedulePanel(state) {
         period: row.period,
         academic_year_id: row.academic_year_id,
         category_id: row.category_id,
+        category_ids: row.category_ids ?? (row.category_id ? [row.category_id] : []),
         gender: row.gender,
         subject_id: row.subject_id,
         teacher_id: row.teacher_id,
@@ -234,7 +243,7 @@ export function createSchedulePanel(state) {
         periodLabel(r.period),
         r.academic_years?.name,
         genderLabel(r.gender),
-        r.categories?.name,
+        getCategoryNames(r).join('، '),
         r.subjects?.name,
         r.teachers?.name,
         r.rooms?.name,
@@ -250,6 +259,11 @@ export function createSchedulePanel(state) {
     a.href = URL.createObjectURL(blob);
     a.download = 'schedule.csv';
     a.click();
+  }
+
+  function getCategoryNames(row) {
+    const ids = row.category_ids?.length ? row.category_ids : [row.category_id];
+    return ids.map((id) => state.categories.find((c) => c.id === id)?.name).filter(Boolean);
   }
 
   function bind() {

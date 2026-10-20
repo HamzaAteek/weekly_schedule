@@ -162,6 +162,10 @@
   padding: 1rem;
 }
 
+#lec-category {
+  min-height: 8rem;
+}
+
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

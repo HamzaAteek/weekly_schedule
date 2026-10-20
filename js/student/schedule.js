@@ -89,6 +89,10 @@ async function loadCategoriesForYear(yearId) {
 function renderTableHeader() {
   els.scheduleHead.innerHTML = '';
   const row = document.createElement('tr');
+  const corner = document.createElement('th');
+  corner.textContent = 'اليوم';
+  corner.className = 'col-day';
+  row.appendChild(corner);
   for (let p = 1; p <= 5; p++) {
     const th = document.createElement('th');
     const lt = lectureTimes.find((t) => t.period_number === p);
@@ -100,10 +104,6 @@ function renderTableHeader() {
     th.innerHTML = `${label}<span class="period-time">${time}</span>`;
     row.appendChild(th);
   }
-  const corner = document.createElement('th');
-  corner.textContent = 'اليوم';
-  corner.className = 'col-day';
-  row.appendChild(corner);
   els.scheduleHead.appendChild(row);
 }
 
@@ -116,6 +116,10 @@ function renderScheduleGrid(items) {
 
   WEEK_DAYS.forEach((d) => {
     const tr = document.createElement('tr');
+    const th = document.createElement('th');
+    th.className = 'col-day';
+    th.textContent = d.label;
+    tr.appendChild(th);
     for (let p = 1; p <= 5; p++) {
       const td = document.createElement('td');
       const item = map.get(`${d.value}-${p}`);
@@ -130,10 +134,6 @@ function renderScheduleGrid(items) {
       }
       tr.appendChild(td);
     }
-    const th = document.createElement('th');
-    th.className = 'col-day';
-    th.textContent = d.label;
-    tr.appendChild(th);
     els.scheduleBody.appendChild(tr);
   });
 }

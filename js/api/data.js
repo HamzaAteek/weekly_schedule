@@ -3,7 +3,7 @@ import { getPublicSupabase } from '../supabase-public.js';
 
 const SCHEDULE_SELECT = `
   id, day, period, gender,
-  academic_year_id, category_id, subject_id, teacher_id, room_id,
+  academic_year_id, category_id, category_ids, subject_id, teacher_id, room_id,
   academic_years ( id, name ),
   categories ( id, name, academic_year_id ),
   subjects ( id, name, code ),
@@ -65,7 +65,9 @@ export async function fetchSchedule(filters = {}) {
   const supabase = await getPublicSupabase();
   let q = supabase.from('schedule').select(SCHEDULE_SELECT);
   if (filters.academic_year_id) q = q.eq('academic_year_id', filters.academic_year_id);
-  if (filters.category_id) q = q.eq('category_id', filters.category_id);
+  if (filters.category_id) {
+    q = q.or(`category_ids.cs.{${filters.category_id}},category_id.eq.${filters.category_id}`);
+  }
   if (filters.gender) q = q.eq('gender', filters.gender);
   if (filters.day) q = q.eq('day', Number(filters.day));
   if (filters.subject_id) q = q.eq('subject_id', filters.subject_id);
@@ -97,7 +99,7 @@ export async function deleteSchedule(id) {
 
 export async function checkScheduleConflicts(row, excludeId = null) {
   const supabase = await getSupabase();
-  const { day, period, academic_year_id, category_id, gender, teacher_id, room_id } = row;
+  const { day, period, academic_year_id, category_ids, category_id, gender, teacher_id, room_id } = row;
 
   let slotQ = supabase
     .from('schedule')
@@ -105,7 +107,7 @@ export async function checkScheduleConflicts(row, excludeId = null) {
     .eq('day', day)
     .eq('period', period)
     .eq('academic_year_id', academic_year_id)
-    .eq('category_id', category_id)
+    .or(`category_ids.ov.{${(category_ids ?? [category_id]).join(',')}},category_id.in.(${(category_ids ?? [category_id]).join(',')})`)
     .eq('gender', gender);
   if (excludeId) slotQ = slotQ.neq('id', excludeId);
   const slot = await slotQ.maybeSingle();
