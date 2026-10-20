@@ -125,6 +125,9 @@ export function createSchedulePanel(state) {
     );
     const selectedCategoryIds =
       values.category_ids ?? (values.category_id ? [values.category_id] : []);
+    const allCategoriesSelected = state.categories
+      .filter((c) => c.academic_year_id === values.academic_year_id)
+      .every((c) => selectedCategoryIds.includes(c.id));
     const catOpts = cats
       .map(
         (c) =>
@@ -159,7 +162,26 @@ export function createSchedulePanel(state) {
           <option value="male" ${values.gender === "male" ? "selected" : ""}>ذكور</option>
           <option value="female" ${values.gender === "female" ? "selected" : ""}>إناث</option>
         </select></div>
-        <div class="form-group"><label>الفئات (يمكن اختيار أكثر من فئة)</label><select name="category_ids" id="lec-category" class="form-control" multiple required>${catOpts}</select></div>
+        <div class="form-group"><label>الفئات (يمكن اختيار أكثر من فئة)</label>
+        <select name="category_ids" id="lec-category" class="form-control" multiple required>
+  <option value="__ALL__" ${allCategoriesSelected ? "selected" : ""}>
+    كل الفئات
+  </option>
+
+  ${state.categories
+    .filter((c) => c.academic_year_id === values.academic_year_id)
+    .map(
+      (c) => `
+      <option
+        value="${c.id}"
+        ${selectedCategoryIds.includes(c.id) ? "selected" : ""}
+      >
+        ${c.name}
+      </option>
+    `,
+    )
+    .join("")}
+</select>
         <div class="form-group"><label>المادة</label><select name="subject_id" class="form-control" required>${subOpts}</select></div>
         <div class="form-group"><label>المدرس</label><select name="teacher_id" class="form-control" required>${teachOpts}</select></div>
         <div class="form-group"><label>القاعة</label><select name="room_id" class="form-control" required>${roomOpts}</select></div>
@@ -171,24 +193,75 @@ export function createSchedulePanel(state) {
   function bindYearCategorySync(overlay) {
     const yearSel = overlay.querySelector("#lec-year");
     const catSel = overlay.querySelector("#lec-category");
+
     if (!yearSel || !catSel) return;
+
     function refreshCategories() {
       const yearId = yearSel.value;
+
       const cats = state.categories.filter(
         (c) => c.academic_year_id === yearId,
       );
-      catSel.innerHTML = cats
-        .map((c) => `<option value="${c.id}">${c.name}</option>`)
-        .join("");
+
+      catSel.innerHTML = `
+      <option value="__ALL__">كل الفئات</option>
+      ${cats
+        .map(
+          (c) => `
+        <option value="${c.id}">${c.name}</option>
+      `,
+        )
+        .join("")}
+    `;
+
       catSel.required = true;
     }
+
     yearSel.addEventListener("change", refreshCategories);
   }
 
+  function bindCategoryAllOption(overlay) {
+    const catSel = overlay.querySelector("#lec-category");
+
+    if (!catSel) return;
+
+    catSel.addEventListener("change", () => {
+      const options = [...catSel.options];
+      const allOption = options.find((o) => o.value === "__ALL__");
+
+      if (!allOption) return;
+
+      const selected = [...catSel.selectedOptions].map((o) => o.value);
+
+      if (selected.includes("__ALL__")) {
+        options.forEach((option) => {
+          option.selected = option.value !== "__ALL__";
+        });
+      } else {
+        allOption.selected = false;
+      }
+    });
+  }
+
   async function saveLecture(fd, excludeId = null) {
-    const categoryIds = fd.getAll("category_ids").filter(Boolean);
+    let categoryIds = fd.getAll("category_ids").filter(Boolean);
+
     if (!categoryIds.length) {
       showToast("اختر فئة واحدة على الأقل.", "error");
+      return false;
+    }
+
+    // إذا اختار "كل الفئات"
+    if (categoryIds.includes("__ALL__")) {
+      const academicYearId = fd.get("academic_year_id");
+
+      categoryIds = state.categories
+        .filter((c) => c.academic_year_id === academicYearId)
+        .map((c) => c.id);
+    }
+
+    if (!categoryIds.length) {
+      showToast("لا توجد فئات لهذا العام الدراسي.", "error");
       return false;
     }
     const row = {
@@ -239,6 +312,7 @@ export function createSchedulePanel(state) {
       },
     );
     bindYearCategorySync(overlay);
+    bindCategoryAllOption(overlay);
   }
 
   function openEditModal(row) {
@@ -259,6 +333,7 @@ export function createSchedulePanel(state) {
       async (fd) => saveLecture(fd, row.id),
     );
     bindYearCategorySync(overlay);
+    bindCategoryAllOption(overlay);
   }
 
   function exportCsv() {
